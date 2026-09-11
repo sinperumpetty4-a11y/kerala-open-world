@@ -1213,6 +1213,299 @@ createPedestrian(
     0xef6c00,
     .03
 );
+    /* =====================================================
+   KERALA BACKWATER
+===================================================== */
+
+const water = new THREE.Mesh(
+    new THREE.PlaneGeometry(90, 150),
+    new THREE.MeshStandardMaterial({
+        color: 0x3f9fb5,
+        transparent: true,
+        opacity: 0.88,
+        roughness: 0.25,
+        metalness: 0.05
+    })
+);
+
+water.rotation.x = -Math.PI / 2;
+
+water.position.set(
+    48,
+    0.04,
+    120
+);
+
+scene.add(water);
+
+
+/* Small shoreline */
+
+const shoreline = new THREE.Mesh(
+    new THREE.PlaneGeometry(100, 8),
+    new THREE.MeshStandardMaterial({
+        color: 0x8b7650
+    })
+);
+
+shoreline.rotation.x = -Math.PI / 2;
+
+shoreline.position.set(
+    48,
+    0.06,
+    42
+);
+
+scene.add(shoreline);
+
+
+/* =====================================================
+   BACKWATER BRIDGE
+===================================================== */
+
+const bridge = new THREE.Group();
+
+
+/* Bridge road */
+
+const bridgeRoad = new THREE.Mesh(
+    new THREE.BoxGeometry(
+        18,
+        0.7,
+        70
+    ),
+    new THREE.MeshStandardMaterial({
+        color: 0x555555
+    })
+);
+
+bridgeRoad.position.y = 0.5;
+
+bridge.add(bridgeRoad);
+
+
+/* Bridge railings */
+
+for (let z = -32; z <= 32; z += 8) {
+
+    const leftPost = new THREE.Mesh(
+        new THREE.BoxGeometry(
+            0.35,
+            2.2,
+            0.35
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xd8d8d8
+        })
+    );
+
+    leftPost.position.set(
+        -9,
+        1.5,
+        z
+    );
+
+    bridge.add(leftPost);
+
+
+    const rightPost = new THREE.Mesh(
+        new THREE.BoxGeometry(
+            0.35,
+            2.2,
+            0.35
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xd8d8d8
+        })
+    );
+
+    rightPost.position.set(
+        9,
+        1.5,
+        z
+    );
+
+    bridge.add(rightPost);
+}
+
+
+/* Bridge top rails */
+
+const leftRail = new THREE.Mesh(
+    new THREE.BoxGeometry(
+        0.3,
+        0.3,
+        70
+    ),
+    new THREE.MeshStandardMaterial({
+        color: 0xcfcfcf
+    })
+);
+
+leftRail.position.set(
+    -9,
+    2.5,
+    0
+);
+
+bridge.add(leftRail);
+
+
+const rightRail = new THREE.Mesh(
+    new THREE.BoxGeometry(
+        0.3,
+        0.3,
+        70
+    ),
+    new THREE.MeshStandardMaterial({
+        color: 0xcfcfcf
+    })
+);
+
+rightRail.position.set(
+    9,
+    2.5,
+    0
+);
+
+bridge.add(rightRail);
+
+
+/* Put bridge across the backwater */
+
+bridge.rotation.y = Math.PI / 2;
+
+bridge.position.set(
+    48,
+    0,
+    120
+);
+
+scene.add(bridge);
+
+
+/* =====================================================
+   KERALA BOAT
+===================================================== */
+
+function createBoat(x, z) {
+
+    const boat = new THREE.Group();
+
+
+    /* Hull */
+
+    const hull = new THREE.Mesh(
+        new THREE.CapsuleGeometry(
+            2,
+            8,
+            6,
+            16
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0x5b321f
+        })
+    );
+
+    hull.scale.y = 0.45;
+
+    hull.rotation.z = Math.PI / 2;
+
+    hull.position.y = 0.45;
+
+    boat.add(hull);
+
+
+    /* Passenger cabin */
+
+    const cabin = new THREE.Mesh(
+        new THREE.BoxGeometry(
+            3.2,
+            1.4,
+            5
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0x9b6a3c
+        })
+    );
+
+    cabin.position.y = 1.25;
+
+    boat.add(cabin);
+
+
+    /* Roof */
+
+    const roof = new THREE.Mesh(
+        new THREE.BoxGeometry(
+            3.8,
+            0.25,
+            5.5
+        ),
+        new THREE.MeshStandardMaterial({
+            color: 0xeeeeee
+        })
+    );
+
+    roof.position.y = 2.05;
+
+    boat.add(roof);
+
+
+    boat.position.set(
+        x,
+        0,
+        z
+    );
+
+    scene.add(boat);
+
+    return boat;
+}
+
+
+/* Backwater boats */
+
+const boat1 = createBoat(
+    35,
+    100
+);
+
+const boat2 = createBoat(
+    65,
+    150
+);
+
+const boat3 = createBoat(
+    42,
+    175
+);
+
+
+/* =====================================================
+   BOAT MOVEMENT
+===================================================== */
+
+const boats = [
+    boat1,
+    boat2,
+    boat3
+];
+
+function updateBoats() {
+
+    boats.forEach((boat, index) => {
+
+        boat.position.x +=
+            0.015 +
+            index * 0.005;
+
+        if (boat.position.x > 85) {
+            boat.position.x = 15;
+        }
+
+    });
+}
 /* =====================================================
    KEYBOARD
 ===================================================== */
@@ -1568,6 +1861,8 @@ function animate(){
     updateCar();
 
     updateTraffic();
+
+    updateBoats();
 
     updateCamera();
 
