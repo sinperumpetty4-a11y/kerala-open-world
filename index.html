@@ -22,7 +22,7 @@ html,body{
     color:white;
     padding:18px;
     border-radius:14px;
-    min-width:230px;
+    min-width:235px;
     line-height:1.65;
     box-shadow:0 6px 25px rgba(0,0,0,.3);
 }
@@ -30,6 +30,10 @@ html,body{
 #hud h2{
     margin:0 0 7px;
     font-size:21px;
+}
+
+#traffic{
+    color:#ffd85c;
 }
 
 #message{
@@ -42,10 +46,6 @@ html,body{
     color:white;
     padding:12px 22px;
     border-radius:12px;
-}
-
-#traffic{
-    color:#ffd85c;
 }
 </style>
 </head>
@@ -75,12 +75,12 @@ import * as THREE from
    SCENE
 ===================================================== */
 
-const scene = new THREE.Scene();
+const scene=new THREE.Scene();
 
-scene.background =
+scene.background=
     new THREE.Color(0x87ceeb);
 
-scene.fog =
+scene.fog=
     new THREE.Fog(
         0x87ceeb,
         90,
@@ -92,26 +92,22 @@ scene.fog =
    CAMERA
 ===================================================== */
 
-const camera =
+const camera=
     new THREE.PerspectiveCamera(
         60,
-        innerWidth / innerHeight,
+        innerWidth/innerHeight,
         .1,
         1000
     );
 
-camera.position.set(
-    0,
-    7,
-    12
-);
+camera.position.set(0,7,12);
 
 
 /* =====================================================
    RENDERER
 ===================================================== */
 
-const renderer =
+const renderer=
     new THREE.WebGLRenderer({
         antialias:true
     });
@@ -131,19 +127,17 @@ document.body.appendChild(
 
 
 /* =====================================================
-   LIGHTING
+   LIGHT
 ===================================================== */
 
-const sun =
+const sun=
     new THREE.DirectionalLight(
         0xffffff,
         2
     );
 
 sun.position.set(
-    80,
-    120,
-    50
+    80,120,50
 );
 
 scene.add(sun);
@@ -161,41 +155,36 @@ scene.add(
    GROUND
 ===================================================== */
 
-const ground =
+const ground=
     new THREE.Mesh(
         new THREE.PlaneGeometry(
-            700,
-            700
+            700,700
         ),
         new THREE.MeshStandardMaterial({
             color:0x5da35d
         })
     );
 
-ground.rotation.x =
-    -Math.PI / 2;
+ground.rotation.x=-Math.PI/2;
 
 scene.add(ground);
 
 
 /* =====================================================
-   MAIN ROAD
+   ROAD
 ===================================================== */
 
-const road =
+const road=
     new THREE.Mesh(
         new THREE.PlaneGeometry(
-            30,
-            650
+            30,650
         ),
         new THREE.MeshStandardMaterial({
             color:0x3e454b
         })
     );
 
-road.rotation.x =
-    -Math.PI / 2;
-
+road.rotation.x=-Math.PI/2;
 road.position.y=.02;
 
 scene.add(road);
@@ -207,12 +196,10 @@ scene.add(road);
 
 for(let z=-320;z<330;z+=12){
 
-    const line =
+    const line=
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                .35,
-                .04,
-                6
+                .35,.04,6
             ),
             new THREE.MeshStandardMaterial({
                 color:0xffdf63
@@ -220,9 +207,7 @@ for(let z=-320;z<330;z+=12){
         );
 
     line.position.set(
-        0,
-        .05,
-        z
+        0,.05,z
     );
 
     scene.add(line);
@@ -235,15 +220,13 @@ for(let z=-320;z<330;z+=12){
 
 function createHouse(x,z){
 
-    const group =
+    const house=
         new THREE.Group();
 
-    const body =
+    const body=
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                8,
-                5,
-                7
+                8,5,7
             ),
             new THREE.MeshStandardMaterial({
                 color:0xd8d2b9
@@ -252,14 +235,12 @@ function createHouse(x,z){
 
     body.position.y=2.5;
 
-    group.add(body);
+    house.add(body);
 
-    const roof =
+    const roof=
         new THREE.Mesh(
             new THREE.ConeGeometry(
-                5.8,
-                3.5,
-                4
+                5.8,3.5,4
             ),
             new THREE.MeshStandardMaterial({
                 color:0x934d3d
@@ -269,15 +250,13 @@ function createHouse(x,z){
     roof.position.y=6.7;
     roof.rotation.y=Math.PI/4;
 
-    group.add(roof);
+    house.add(roof);
 
-    group.position.set(
-        x,
-        0,
-        z
+    house.position.set(
+        x,0,z
     );
 
-    scene.add(group);
+    scene.add(house);
 }
 
 for(let z=-280;z<300;z+=40){
@@ -288,21 +267,18 @@ for(let z=-280;z<300;z+=40){
 
 
 /* =====================================================
-   COCONUT TREES
+   COCONUT PALMS
 ===================================================== */
 
 function createPalm(x,z){
 
-    const palm =
+    const palm=
         new THREE.Group();
 
-    const trunk =
+    const trunk=
         new THREE.Mesh(
             new THREE.CylinderGeometry(
-                .45,
-                .7,
-                8,
-                8
+                .45,.7,8,8
             ),
             new THREE.MeshStandardMaterial({
                 color:0x70442b
@@ -315,12 +291,10 @@ function createPalm(x,z){
 
     for(let i=0;i<8;i++){
 
-        const leaf =
+        const leaf=
             new THREE.Mesh(
                 new THREE.BoxGeometry(
-                    .35,
-                    .25,
-                    5
+                    .35,.25,5
                 ),
                 new THREE.MeshStandardMaterial({
                     color:0x146b35
@@ -328,18 +302,13 @@ function createPalm(x,z){
             );
 
         leaf.position.y=8;
-        leaf.rotation.y=
-            i*Math.PI/4;
+        leaf.rotation.y=i*Math.PI/4;
         leaf.rotation.x=-.25;
 
         palm.add(leaf);
     }
 
-    palm.position.set(
-        x,
-        0,
-        z
-    );
+    palm.position.set(x,0,z);
 
     scene.add(palm);
 }
@@ -355,16 +324,13 @@ for(let z=-310;z<330;z+=32){
    PLAYER
 ===================================================== */
 
-const player =
+const player=
     new THREE.Group();
 
-const playerBody =
+const playerBody=
     new THREE.Mesh(
         new THREE.CapsuleGeometry(
-            .65,
-            1.8,
-            6,
-            12
+            .65,1.8,6,12
         ),
         new THREE.MeshStandardMaterial({
             color:0x164f38
@@ -376,35 +342,25 @@ playerBody.position.y=1.3;
 player.add(playerBody);
 
 player.position.set(
-    0,
-    0,
-    12
+    0,0,12
 );
 
 scene.add(player);
 
 
 /* =====================================================
-   PLAYER CAR
+   CAR CREATOR
 ===================================================== */
 
-const car =
-    new THREE.Group();
+function addCarParts(group,color){
 
-function addCarParts(
-    group,
-    bodyColor
-){
-
-    const body =
+    const body=
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                4.2,
-                1.2,
-                7
+                4.2,1.2,7
             ),
             new THREE.MeshStandardMaterial({
-                color:bodyColor
+                color:color
             })
         );
 
@@ -412,34 +368,26 @@ function addCarParts(
 
     group.add(body);
 
-    const roof =
+    const roof=
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                3.4,
-                1.1,
-                3.5
+                3.4,1.1,3.5
             ),
             new THREE.MeshStandardMaterial({
-                color:
-                    new THREE.Color(bodyColor)
-                        .multiplyScalar(.72)
+                color:new THREE.Color(color)
+                    .multiplyScalar(.72)
             })
         );
 
     roof.position.set(
-        0,
-        2,
-        -.2
+        0,2,-.2
     );
 
     group.add(roof);
 
-    const wheelGeometry =
+    const wheelGeometry=
         new THREE.CylinderGeometry(
-            .75,
-            .75,
-            .55,
-            16
+            .75,.75,.55,16
         );
 
     [
@@ -449,7 +397,7 @@ function addCarParts(
         [2.1,2.2]
     ].forEach(([x,z])=>{
 
-        const wheel =
+        const wheel=
             new THREE.Mesh(
                 wheelGeometry,
                 new THREE.MeshStandardMaterial({
@@ -457,18 +405,23 @@ function addCarParts(
                 })
             );
 
-        wheel.rotation.z=
-            Math.PI/2;
+        wheel.rotation.z=Math.PI/2;
 
         wheel.position.set(
-            x,
-            .75,
-            z
+            x,.75,z
         );
 
         group.add(wheel);
     });
 }
+
+
+/* =====================================================
+   PLAYER CAR
+===================================================== */
+
+const car=
+    new THREE.Group();
 
 addCarParts(
     car,
@@ -476,9 +429,7 @@ addCarParts(
 );
 
 car.position.set(
-    6,
-    0,
-    8
+    6,0,8
 );
 
 scene.add(car);
@@ -495,15 +446,13 @@ function createAuto(
     direction
 ){
 
-    const auto =
+    const auto=
         new THREE.Group();
 
-    const body =
+    const body=
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                2.5,
-                1.8,
-                3.4
+                2.5,1.8,3.4
             ),
             new THREE.MeshStandardMaterial({
                 color:color
@@ -514,12 +463,10 @@ function createAuto(
 
     auto.add(body);
 
-    const roof =
+    const roof=
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                2.4,
-                .35,
-                2.9
+                2.4,.35,2.9
             ),
             new THREE.MeshStandardMaterial({
                 color:0x171717
@@ -530,12 +477,10 @@ function createAuto(
 
     auto.add(roof);
 
-    const windshield =
+    const glass=
         new THREE.Mesh(
             new THREE.BoxGeometry(
-                2,
-                .7,
-                .1
+                2,.7,.1
             ),
             new THREE.MeshStandardMaterial({
                 color:0x263238,
@@ -544,20 +489,15 @@ function createAuto(
             })
         );
 
-    windshield.position.set(
-        0,
-        1.8,
-        -1.72
+    glass.position.set(
+        0,1.8,-1.72
     );
 
-    auto.add(windshield);
+    auto.add(glass);
 
-    const wheelGeometry =
+    const wheel=
         new THREE.CylinderGeometry(
-            .48,
-            .48,
-            .35,
-            12
+            .48,.48,.35,12
         );
 
     [
@@ -566,40 +506,35 @@ function createAuto(
         [0,1.25]
     ].forEach(([wx,wz])=>{
 
-        const wheel =
+        const w=
             new THREE.Mesh(
-                wheelGeometry,
+                wheel,
                 new THREE.MeshStandardMaterial({
                     color:0x111111
                 })
             );
 
-        wheel.rotation.z=
-            Math.PI/2;
+        w.rotation.z=Math.PI/2;
 
-        wheel.position.set(
-            wx,
-            .55,
-            wz
+        w.position.set(
+            wx,.55,wz
         );
 
-        auto.add(wheel);
+        auto.add(w);
     });
 
     auto.position.set(
-        x,
-        0,
-        z
+        x,0,z
     );
 
-    auto.rotation.y =
-        direction > 0
-        ? Math.PI
-        : 0;
+    auto.rotation.y=
+        direction>0
+        ?Math.PI
+        :0;
 
     scene.add(auto);
 
-    return {
+    return{
         mesh:auto,
         speed:.18,
         direction
@@ -612,13 +547,10 @@ function createAuto(
 ===================================================== */
 
 function createTrafficCar(
-    color,
-    x,
-    z,
-    direction
+    color,x,z,direction
 ){
 
-    const trafficCar =
+    const trafficCar=
         new THREE.Group();
 
     addCarParts(
@@ -627,23 +559,21 @@ function createTrafficCar(
     );
 
     trafficCar.position.set(
-        x,
-        0,
-        z
+        x,0,z
     );
 
-    trafficCar.rotation.y =
-        direction > 0
-        ? Math.PI
-        : 0;
+    trafficCar.rotation.y=
+        direction>0
+        ?Math.PI
+        :0;
 
     scene.add(
         trafficCar
     );
 
-    return {
+    return{
         mesh:trafficCar,
-        speed:.22 +
+        speed:.22+
             Math.random()*.08,
         direction
     };
@@ -651,97 +581,353 @@ function createTrafficCar(
 
 
 /* =====================================================
-   CREATE TRAFFIC
+   KERALA BUS
+===================================================== */
+
+function createBus(
+    x,z,direction
+){
+
+    const bus=
+        new THREE.Group();
+
+    /* Main body */
+
+    const body=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                4.8,
+                3.8,
+                12
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0xe7d7a7
+            })
+        );
+
+    body.position.y=2.5;
+
+    bus.add(body);
+
+
+    /* Red lower stripe */
+
+    const stripe=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                4.9,
+                .65,
+                12.05
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0xb51f25
+            })
+        );
+
+    stripe.position.y=1.35;
+
+    bus.add(stripe);
+
+
+    /* Black window band */
+
+    const windowBand=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                4.85,
+                1.35,
+                10.3
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x17252a
+            })
+        );
+
+    windowBand.position.y=3.65;
+
+    bus.add(windowBand);
+
+
+    /* Individual windows */
+
+    for(let i=-4;i<=4;i+=2){
+
+        const window=
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    3.9,
+                    .85,
+                    1.35
+                ),
+                new THREE.MeshStandardMaterial({
+                    color:0x78909c,
+                    metalness:.1,
+                    roughness:.25
+                })
+            );
+
+        window.position.set(
+            0,
+            3.65,
+            i
+        );
+
+        bus.add(window);
+    }
+
+
+    /* Roof */
+
+    const roof=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                4.7,.3,11.8
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0xf2e6bd
+            })
+        );
+
+    roof.position.y=4.55;
+
+    bus.add(roof);
+
+
+    /* Front windshield */
+
+    const windshield=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                3.9,
+                1.3,
+                .15
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x263238
+            })
+        );
+
+    windshield.position.set(
+        0,
+        3.3,
+        -6.05
+    );
+
+    bus.add(windshield);
+
+
+    /* Front bumper */
+
+    const bumper=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                4.7,.35,.3
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0xeeeeee
+            })
+        );
+
+    bumper.position.set(
+        0,.65,-6.15
+    );
+
+    bus.add(bumper);
+
+
+    /* Headlights */
+
+    const headlightMaterial=
+        new THREE.MeshStandardMaterial({
+            color:0xffffcc,
+            emissive:0xffff99,
+            emissiveIntensity:.5
+        });
+
+    [-1.45,1.45].forEach(x=>{
+
+        const light=
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    .65,.45,.15
+                ),
+                headlightMaterial
+            );
+
+        light.position.set(
+            x,1.05,-6.18
+        );
+
+        bus.add(light);
+    });
+
+
+    /* Wheels */
+
+    const wheelGeometry=
+        new THREE.CylinderGeometry(
+            .85,.85,.6,20
+        );
+
+    [
+        [-2.45,-4],
+        [2.45,-4],
+        [-2.45,4],
+        [2.45,4]
+    ].forEach(([wx,wz])=>{
+
+        const wheel=
+            new THREE.Mesh(
+                wheelGeometry,
+                new THREE.MeshStandardMaterial({
+                    color:0x111111
+                })
+            );
+
+        wheel.rotation.z=Math.PI/2;
+
+        wheel.position.set(
+            wx,.85,wz
+        );
+
+        bus.add(wheel);
+    });
+
+
+    /* Bus destination sign */
+
+    const sign=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                2.8,.45,.12
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x202020,
+                emissive:0x332200
+            })
+        );
+
+    sign.position.set(
+        0,4.25,-6.2
+    );
+
+    bus.add(sign);
+
+
+    /* Bus position */
+
+    bus.position.set(
+        x,0,z
+    );
+
+    bus.rotation.y=
+        direction>0
+        ?Math.PI
+        :0;
+
+    scene.add(bus);
+
+    return{
+        mesh:bus,
+        speed:.16,
+        direction
+    };
+}
+
+
+/* =====================================================
+   TRAFFIC LIST
 ===================================================== */
 
 const traffic=[];
 
 
-/* Cars travelling north */
+/* Cars */
 
 traffic.push(
     createTrafficCar(
         0x1565c0,
-        -7,
-        -100,
-        -1
+        -7,-100,-1
     )
 );
 
 traffic.push(
     createTrafficCar(
         0xf9a825,
-        -7,
-        -210,
-        -1
+        -7,-210,-1
     )
 );
 
 traffic.push(
     createTrafficCar(
         0xeeeeee,
-        -7,
-        130,
-        -1
+        -7,130,-1
     )
 );
-
-
-/* Cars travelling south */
 
 traffic.push(
     createTrafficCar(
         0x2e7d32,
-        7,
-        80,
-        1
+        7,80,1
     )
 );
 
 traffic.push(
     createTrafficCar(
         0x6a1b9a,
-        7,
-        200,
-        1
+        7,200,1
     )
 );
 
 
-/* Auto-rickshaws */
+/* Autos */
 
 traffic.push(
     createAuto(
         0xffc107,
-        -7,
-        -30,
-        -1
+        -7,-30,-1
     )
 );
 
 traffic.push(
     createAuto(
         0xffc107,
-        7,
-        150,
-        1
+        7,150,1
     )
 );
 
 traffic.push(
     createAuto(
         0x00897b,
-        -7,
-        230,
-        -1
+        -7,230,-1
+    )
+);
+
+
+/* Buses */
+
+traffic.push(
+    createBus(
+        7,-170,1
+    )
+);
+
+traffic.push(
+    createBus(
+        -7,280,-1
+    )
+);
+
+traffic.push(
+    createBus(
+        7,-20,1
     )
 );
 
 document.getElementById(
     "traffic"
-).innerText =
-    "Traffic: " +
-    traffic.length;
+).innerText=
+    "Traffic: "+traffic.length;
 
 
 /* =====================================================
@@ -778,7 +964,7 @@ window.addEventListener(
 
 
 /* =====================================================
-   VEHICLE STATE
+   PLAYER VEHICLE STATE
 ===================================================== */
 
 let driving=false;
@@ -802,7 +988,7 @@ function toggleVehicle(){
 
     if(!driving){
 
-        const distance =
+        const distance=
             player.position.distanceTo(
                 car.position
             );
@@ -852,17 +1038,17 @@ function toggleVehicle(){
 
 
 /* =====================================================
-   PLAYER MOVEMENT
+   WALKING
 ===================================================== */
 
 function updatePlayer(){
 
     if(driving)return;
 
-    const speed =
+    const speed=
         keys["shift"]
-        ? .28
-        : .14;
+        ?.28
+        :.14;
 
     if(keys["w"])
         player.position.z-=speed;
@@ -879,8 +1065,7 @@ function updatePlayer(){
     player.position.x=
         THREE.MathUtils.clamp(
             player.position.x,
-            -13,
-            13
+            -13,13
         );
 }
 
@@ -920,8 +1105,7 @@ function updateCar(){
 
             carSpeed=
                 Math.max(
-                    carSpeed,
-                    -.3
+                    carSpeed,-.3
                 );
         }
     }
@@ -959,11 +1143,9 @@ function updateCar(){
             car.rotation.y-=steering;
     }
 
-    const direction =
+    const direction=
         new THREE.Vector3(
-            0,
-            0,
-            -1
+            0,0,-1
         );
 
     direction.applyQuaternion(
@@ -978,15 +1160,13 @@ function updateCar(){
     car.position.x=
         THREE.MathUtils.clamp(
             car.position.x,
-            -13,
-            13
+            -13,13
         );
 
     car.position.z=
         THREE.MathUtils.clamp(
             car.position.z,
-            -320,
-            320
+            -320,320
         );
 }
 
@@ -999,26 +1179,19 @@ function updateTraffic(){
 
     traffic.forEach(vehicle=>{
 
-        vehicle.mesh.position.z +=
-            vehicle.direction *
+        vehicle.mesh.position.z+=
+            vehicle.direction*
             vehicle.speed;
-
-        /*
-          Loop traffic around the map.
-        */
 
         if(
             vehicle.mesh.position.z>330
         ){
-
             vehicle.mesh.position.z=-330;
-
         }
 
         if(
             vehicle.mesh.position.z<-330
         ){
-
             vehicle.mesh.position.z=330;
         }
     });
@@ -1029,35 +1202,32 @@ function updateTraffic(){
    CAMERA
 ===================================================== */
 
-const cameraTarget =
+const cameraTarget=
     new THREE.Vector3();
 
 function updateCamera(){
 
-    const target =
+    const target=
         driving
-        ? car
-        : player;
+        ?car
+        :player;
 
-    const offset =
+    const offset=
         new THREE.Vector3(
-            0,
-            7,
-            11
+            0,7,11
         );
 
     offset.applyQuaternion(
         target.quaternion
     );
 
-    const desired =
+    const desired=
         target.position
             .clone()
             .add(offset);
 
     camera.position.lerp(
-        desired,
-        .08
+        desired,.08
     );
 
     cameraTarget.copy(
@@ -1073,7 +1243,7 @@ function updateCamera(){
 
 
 /* =====================================================
-   ANIMATION
+   GAME LOOP
 ===================================================== */
 
 function animate(){
@@ -1108,8 +1278,7 @@ window.addEventListener(
     ()=>{
 
         camera.aspect=
-            innerWidth/
-            innerHeight;
+            innerWidth/innerHeight;
 
         camera.updateProjectionMatrix();
 
