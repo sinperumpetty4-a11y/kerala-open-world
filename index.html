@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kerala Open World</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #87c9dc;
+      font-family: Arial, sans-serif;
+    }
+
+    #game {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #hud {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 10;
+      color: white;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 14px 18px;
+      border-radius: 12px;
+      line-height: 1.6;
+      pointer-events: none;
+    }
+
+    #title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    #message {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      color: white;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 12px 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="hud">
+    <div id="title">🌴 Kerala Open World</div>
+    <div>W A S D = Move</div>
+    <div>E = Enter / Exit Vehicle</div>
+    <div>Shift = Run</div>
+  </div>
+
+  <div id="message">
+    Welcome to Kerala. Explore the street!
+  </div>
+
+  <canvas id="game"></canvas>
+
+  <script type="module">
+
+    import * as THREE from
+      "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+    const canvas = document.getElementById("game");
+
+    // -------------------------
+    // SCENE
+    // -------------------------
+
+    const scene = new THREE.Scene();
+
+    scene.background = new THREE.Color(0x8ccfe0);
+
+    // -------------------------
+    // CAMERA
+    // -------------------------
+
+    const camera = new THREE.PerspectiveCamera(
+      65,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+
+    camera.position.set(0, 6, 10);
+
+    // -------------------------
+    // RENDERER
+    // -------------------------
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: true
+    });
+
+    renderer.setSize(
+      window.innerWidth,
+      window.innerHeight
+    );
+
+    renderer.setPixelRatio(
+      Math.min(window.devicePixelRatio, 2)
+    );
+
+    renderer.shadowMap.enabled = true;
+
+    // -------------------------
+    // LIGHTING
+    // -------------------------
+
+    const sun = new THREE.DirectionalLight(
+      0xffffff,
+      2
+    );
+
+    sun.position.set(30, 50, 20);
+    sun.castShadow = true;
+
+    scene.add(sun);
+
+    const ambient = new THREE.HemisphereLight(
+      0xbfe9ff,
+      0x4b6b43,
+      1.5
+    );
+
+    scene.add(ambient);
+
+    // -------------------------
+    // GROUND
+    // -------------------------
+
+    const groundGeometry =
+      new THREE.PlaneGeometry(300, 300);
+
+    const groundMaterial =
+      new THREE.MeshStandardMaterial({
+        color: 0x69a85d
+      });
+
+    const ground =
+      new THREE.Mesh(
+        groundGeometry,
+        groundMaterial
+      );
+
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+
+    scene.add(ground);
+
+    // -------------------------
+    // ROAD
+    // -------------------------
+
+    const roadGeometry =
+      new THREE.BoxGeometry(18, 0.2, 220);
+
+    const roadMaterial =
+      new THREE.MeshStandardMaterial({
+        color: 0x44484a
+      });
+
+    const road =
+      new THREE.Mesh(
+        roadGeometry,
+        roadMaterial
+      );
+
+    road.position.y = 0.1;
+    road.receiveShadow = true;
+
+    scene.add(road);
+
+    // Road markings
+
+    for (let z = -100; z < 100; z += 12) {
+
+      const lineGeometry =
+        new THREE.BoxGeometry(
+          0.25,
+          0.04,
+          5
+        );
+
+      const lineMaterial =
+        new THREE.MeshBasicMaterial({
+          color: 0xf0dc8b
+        });
+
+      const line =
+        new THREE.Mesh(
+          lineGeometry,
+          lineMaterial
+        );
+
+      line.position.set(
+        0,
+        0.23,
+        z
+      );
+
+      scene.add(line);
+    }
+
+    // -------------------------
+    // HOUSE FUNCTION
+    // -------------------------
+
+    function createHouse(x, z) {
+
+      const group = new THREE.Group();
+
+      const bodyGeometry =
+        new THREE.BoxGeometry(
+          8,
+          5,
+          7
+        );
+
+      const bodyMaterial =
+        new THREE.MeshStandardMaterial({
+          color: 0xe8d9b9
+        });
+
+      const body =
+        new THREE.Mesh(
+          bodyGeometry,
+          bodyMaterial
+        );
+
+      body.position.y = 2.5;
+      body.castShadow = true;
+      body.receiveShadow = true;
+
+      group.add(body);
+
+      const roofGeometry =
+        new THREE.ConeGeometry(
+          6,
+          3,
+          4
+        );
+
+      const roofMaterial =
+        new THREE.MeshStandardMaterial({
+          color: 0x8f4638
+        });
+
+      const roof =
+        new THREE.Mesh(
+          roofGeometry,
+          roofMaterial
+        );
+
+      roof.position.y = 6.5;
+      roof.rotation.y = Math.PI / 4;
+      roof.castShadow = true;
+
+      group.add(roof);
+
+      group.position.set(x, 0, z);
+
+      scene.add(group);
+    }
+
+    createHouse(-15, -25);
+    createHouse(15, -45);
+    createHouse(-15, -70);
+    createHouse(15, -95);
+
+    // -------------------------
+    // COCONUT TREE
+    // -------------------------
+
+    function createPalm(x, z) {
+
+      const group = new THREE.Group();
+
+      const trunkGeometry =
+        new THREE.CylinderGeometry(
+          0.35,
+          0.55,
+          7,
+          10
+        );
+
+      const trunkMaterial =
+        new THREE.MeshStandardMaterial({
+          color: 0x795538
+        });
+
+      const trunk =
+        new THREE.Mesh(
+          trunkGeometry,
+          trunkMaterial
+        );
+
+      trunk.position.y = 3.5;
+      trunk.castShadow = true;
+
+      group.add(trunk);
+
+      for (let i = 0; i < 7; i++) {
+
+        const leafGeometry =
+          new THREE.BoxGeometry(
+            0.35,
+            0.15,
+            4
+          );
+
+        const leafMaterial =
+          new THREE.MeshStandardMaterial({
+            color: 0x26733b
+          });
+
+        const leaf =
+          new THREE.Mesh(
+            leafGeometry,
+            leafMaterial
+          );
+
+        leaf.position.y = 7;
+
+        leaf.rotation.y =
+          (Math.PI * 2 * i) / 7;
+
+        leaf.rotation.x = -0.35;
+
+        group.add(leaf);
+      }
+
+      group.position.set(x, 0, z);
+
+      scene.add(group);
+    }
+
+    createPalm(-25, -15);
+    createPalm(25, -20);
+    createPalm(-25, -50);
+    createPalm(25, -65);
+    createPalm(-25, -90);
+    createPalm(25, -110);
+
+    // -------------------------
+    // PLAYER
+    // -------------------------
+
+    const player = new THREE.Group();
+
+    const playerBody =
+      new THREE.Mesh(
+        new THREE.CapsuleGeometry(
+          0.55,
+          1.4,
+          6,
+          12
+        ),
+        new THREE.MeshStandardMaterial({
+          color: 0x3c6e4f
+        })
+      );
+
+    playerBody.position.y = 1.35;
+    playerBody.castShadow = true;
+
+    player.add(playerBody);
+
+    player.position.set(
+      0,
+      0,
+      25
+    );
+
+    scene.add(player);
+
+    // -------------------------
+    // CAR
+    // -------------------------
+
+    const car = new THREE.Group();
+
+    const carBody =
+      new THREE.Mesh(
+        new THREE.BoxGeometry(
+          2.5,
+          0.8,
+          4.5
+        ),
+        new THREE.MeshStandardMaterial({
+          color: 0xc62828
+        })
+      );
+
+    carBody.position.y = 0.8;
+    carBody.castShadow = true;
+
+    car.add(carBody);
+
+    const roof =
+      new THREE.Mesh(
+        new THREE.BoxGeometry(
+          2.1,
+          0.65,
+          2.2
+        ),
+        new THREE.MeshStandardMaterial({
+          color: 0xb71c1c
+        })
+      );
+
+    roof.position.y = 1.45;
+    roof.position.z = -0.25;
+
+    car.add(roof);
+
+    car.position.set(
+      4,
+      0,
+      20
+    );
+
+    scene.add(car);
+
+    // -------------------------
+    // INPUT
+    // -------------------------
+
+    const keys = {};
+
+    window.addEventListener(
+      "keydown",
+      event => {
+
+        keys[event.key.toLowerCase()] = true;
+
+        if (
+          event.key.toLowerCase() === "e"
+        ) {
+
+          const distance =
+            player.position.distanceTo(
+              car.position
+            );
+
+          if (distance < 4) {
+
+            player.visible =
+              !player.visible;
+
+            document.getElementById(
+              "message"
+            ).textContent =
+              player.visible
+                ? "🚶 You exited the car."
+                : "🚗 You entered the car!";
+          }
+        }
+      }
+    );
+
+    window.addEventListener(
+      "keyup",
+      event => {
+        keys[event.key.toLowerCase()] = false;
+      }
+    );
+
+    // -------------------------
+    // GAME LOOP
+    // -------------------------
+
+    const clock =
+      new THREE.Clock();
+
+    function animate() {
+
+      requestAnimationFrame(
+        animate
+      );
+
+      const delta =
+        Math.min(
+          clock.getDelta(),
+          0.05
+        );
+
+      let speed =
+        keys["shift"]
+          ? 12
+          : 6;
+
+      if (keys["w"]) {
+        player.position.z -=
+          speed * delta;
+      }
+
+      if (keys["s"]) {
+        player.position.z +=
+          speed * delta;
+      }
+
+      if (keys["a"]) {
+        player.position.x -=
+          speed * delta;
+      }
+
+      if (keys["d"]) {
+        player.position.x +=
+          speed * delta;
+      }
+
+      // Camera follows player
+
+      const target =
+        new THREE.Vector3(
+          player.position.x,
+          player.position.y + 2,
+          player.position.z
+        );
+
+      const cameraTarget =
+        new THREE.Vector3(
+          player.position.x,
+          5,
+          player.position.z + 9
+        );
+
+      camera.position.lerp(
+        cameraTarget,
+        0.08
+      );
+
+      camera.lookAt(target);
+
+      renderer.render(
+        scene,
+        camera
+      );
+    }
+
+    animate();
+
+    // -------------------------
+    // RESIZE
+    // -------------------------
+
+    window.addEventListener(
+      "resize",
+      () => {
+
+        camera.aspect =
+          window.innerWidth /
+          window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+          window.innerWidth,
+          window.innerHeight
+        );
+      }
+    );
+
+  </script>
+
+</body>
+</html>
