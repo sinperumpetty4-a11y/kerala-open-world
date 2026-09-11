@@ -203,7 +203,21 @@ sideRoad.position.set(
 );
 
 scene.add(sideRoad);
+// Junction connection
+const junction = new THREE.Mesh(
+    new THREE.BoxGeometry(30, 0.21, 18),
+    new THREE.MeshStandardMaterial({
+        color: 0x3f454b
+    })
+);
 
+junction.position.set(
+    0,
+    0.11,
+    120
+);
+
+scene.add(junction);
 
 /* =====================================================
    ROAD MARKINGS
