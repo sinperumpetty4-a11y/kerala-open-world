@@ -218,7 +218,74 @@ junction.position.set(
 );
 
 scene.add(junction);
+// Kerala-style bus stop
+const busStop = new THREE.Group();
 
+// Shelter roof
+const stopRoof = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 0.4, 3),
+    new THREE.MeshStandardMaterial({
+        color: 0x8b4513
+    })
+);
+stopRoof.position.y = 3.2;
+busStop.add(stopRoof);
+
+// Shelter back wall
+const stopBack = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 2.5, 0.2),
+    new THREE.MeshStandardMaterial({
+        color: 0xd9d0b8
+    })
+);
+stopBack.position.set(0, 1.6, 1.4);
+busStop.add(stopBack);
+
+// Shelter posts
+for (const x of [-3.5, 3.5]) {
+    const post = new THREE.Mesh(
+        new THREE.BoxGeometry(0.25, 3, 0.25),
+        new THREE.MeshStandardMaterial({
+            color: 0x555555
+        })
+    );
+    post.position.set(x, 1.5, 0);
+    busStop.add(post);
+}
+
+// Bench
+const bench = new THREE.Mesh(
+    new THREE.BoxGeometry(5, 0.35, 1),
+    new THREE.MeshStandardMaterial({
+        color: 0x704214
+    })
+);
+bench.position.set(0, 0.8, 0.5);
+busStop.add(bench);
+
+// Bus stop sign
+const signPole = new THREE.Mesh(
+    new THREE.BoxGeometry(0.15, 2.5, 0.15),
+    new THREE.MeshStandardMaterial({
+        color: 0x444444
+    })
+);
+signPole.position.set(4.5, 1.25, 0);
+busStop.add(signPole);
+
+const sign = new THREE.Mesh(
+    new THREE.BoxGeometry(1.5, 0.8, 0.15),
+    new THREE.MeshStandardMaterial({
+        color: 0xf4c542
+    })
+);
+sign.position.set(4.5, 2.5, 0);
+busStop.add(sign);
+
+// Position beside the road
+busStop.position.set(20, 0, 110);
+
+scene.add(busStop);
 /* =====================================================
    ROAD MARKINGS
 ===================================================== */
