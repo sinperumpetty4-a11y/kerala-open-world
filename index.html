@@ -286,6 +286,156 @@ busStop.add(sign);
 busStop.position.set(20, 0, 110);
 
 scene.add(busStop);
+    // Kerala-style fuel station
+const fuelStation = new THREE.Group();
+
+// Station building
+const fuelBuilding = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 4, 6),
+    new THREE.MeshStandardMaterial({
+        color: 0xe8e0c8
+    })
+);
+fuelBuilding.position.set(0, 2, 6);
+fuelStation.add(fuelBuilding);
+
+// Station roof
+const fuelRoof = new THREE.Mesh(
+    new THREE.BoxGeometry(10, 0.5, 8),
+    new THREE.MeshStandardMaterial({
+        color: 0xc62828
+    })
+);
+fuelRoof.position.set(0, 4.2, 6);
+fuelStation.add(fuelRoof);
+
+// Fuel canopy
+const canopy = new THREE.Mesh(
+    new THREE.BoxGeometry(12, 0.4, 10),
+    new THREE.MeshStandardMaterial({
+        color: 0xf5f5f5
+    })
+);
+canopy.position.y = 4;
+fuelStation.add(canopy);
+
+// Canopy pillars
+for (const x of [-5, 5]) {
+    const pillar = new THREE.Mesh(
+        new THREE.BoxGeometry(0.35, 4, 0.35),
+        new THREE.MeshStandardMaterial({
+            color: 0x555555
+        })
+    );
+    pillar.position.set(x, 2, 0);
+    fuelStation.add(pillar);
+}
+
+// Fuel pumps
+for (const x of [-3, 3]) {
+    const pump = new THREE.Mesh(
+        new THREE.BoxGeometry(1.2, 2, 1),
+        new THREE.MeshStandardMaterial({
+            color: 0xe53935
+        })
+    );
+    pump.position.set(x, 1, 0);
+    fuelStation.add(pump);
+}
+
+// Fuel station sign
+const fuelSign = new THREE.Mesh(
+    new THREE.BoxGeometry(3, 3, 0.3),
+    new THREE.MeshStandardMaterial({
+        color: 0xffd54f
+    })
+);
+fuelSign.position.set(7, 3, 2);
+fuelStation.add(fuelSign);
+
+// Position beside the road
+fuelStation.position.set(
+    -20,
+    0,
+    180
+);
+
+scene.add(fuelStation);
+    // Kerala-style fuel station
+const fuelStation = new THREE.Group();
+
+// Station building
+const fuelBuilding = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 4, 6),
+    new THREE.MeshStandardMaterial({
+        color: 0xe8e0c8
+    })
+);
+fuelBuilding.position.set(0, 2, 6);
+fuelStation.add(fuelBuilding);
+
+// Station roof
+const fuelRoof = new THREE.Mesh(
+    new THREE.BoxGeometry(10, 0.5, 8),
+    new THREE.MeshStandardMaterial({
+        color: 0xc62828
+    })
+);
+fuelRoof.position.set(0, 4.2, 6);
+fuelStation.add(fuelRoof);
+
+// Fuel canopy
+const canopy = new THREE.Mesh(
+    new THREE.BoxGeometry(12, 0.4, 10),
+    new THREE.MeshStandardMaterial({
+        color: 0xf5f5f5
+    })
+);
+canopy.position.y = 4;
+fuelStation.add(canopy);
+
+// Canopy pillars
+for (const x of [-5, 5]) {
+    const pillar = new THREE.Mesh(
+        new THREE.BoxGeometry(0.35, 4, 0.35),
+        new THREE.MeshStandardMaterial({
+            color: 0x555555
+        })
+    );
+    pillar.position.set(x, 2, 0);
+    fuelStation.add(pillar);
+}
+
+// Fuel pumps
+for (const x of [-3, 3]) {
+    const pump = new THREE.Mesh(
+        new THREE.BoxGeometry(1.2, 2, 1),
+        new THREE.MeshStandardMaterial({
+            color: 0xe53935
+        })
+    );
+    pump.position.set(x, 1, 0);
+    fuelStation.add(pump);
+}
+
+// Fuel station sign
+const fuelSign = new THREE.Mesh(
+    new THREE.BoxGeometry(3, 3, 0.3),
+    new THREE.MeshStandardMaterial({
+        color: 0xffd54f
+    })
+);
+fuelSign.position.set(7, 3, 2);
+fuelStation.add(fuelSign);
+
+// Position beside the road
+fuelStation.position.set(
+    -20,
+    0,
+    180
+);
+
+scene.add(fuelStation);
 /* =====================================================
    ROAD MARKINGS
 ===================================================== */
