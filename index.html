@@ -61,7 +61,6 @@ html,body{
     <div>E = Enter / Exit Car</div>
     <div>Shift = Run</div>
     <div id="traffic">Traffic: 0</div>
-    <div id="fuel">Fuel: 100%</div>
 </div>
 
 <div id="message">
@@ -1719,8 +1718,6 @@ window.addEventListener(
 let driving=false;
 
 let carSpeed = 0;
-    
-let fuel = 100;
 
 const maxSpeed=.65;
 
@@ -1906,15 +1903,7 @@ function updateCar(){
     car.position.addScaledVector(
         direction,
         carSpeed
-    // Fuel consumption
-if (Math.abs(carSpeed) > 0.01) {
-    fuel -= 0.015;
-    fuel = Math.max(0, fuel);
-
-    document.getElementById("fuel").innerText =
-        "Fuel: " + Math.floor(fuel) + "%";
-    );
-
+  
     car.position.x=
         THREE.MathUtils.clamp(
             car.position.x,
