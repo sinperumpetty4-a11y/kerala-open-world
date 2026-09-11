@@ -1753,32 +1753,40 @@ function updateCar(){
 
 function updateTraffic(){
 
-    traffic.forEach(vehicle=>{
+    traffic.forEach(vehicle => {
 
-        vehicle.mesh.position.z+=
-            vehicle.direction*
-            vehicle.speed;
+        vehicle.mesh.position.z +=
+            vehicle.direction * vehicle.speed;
 
-        if(
-            vehicle.mesh.position.z>330
-        ){
-            vehicle.mesh.position.z=-330;
+        /*
+         * Keep traffic on the road.
+         * Vehicles use the left/right lanes
+         * and cross the bridge instead of
+         * driving through the water.
+         */
+
+        if(vehicle.mesh.position.z > 330){
+
+            vehicle.mesh.position.z = -330;
+
         }
 
-        if(
-            vehicle.mesh.position.z<-330
-        ){
-            vehicle.mesh.position.z=330;
+        if(vehicle.mesh.position.z < -330){
+
+            vehicle.mesh.position.z = 330;
+
         }
     });
-        /* Move pedestrians */
+
+
+    /* =================================================
+       PEDESTRIANS
+    ================================================= */
 
     pedestrians.forEach(npc => {
 
         npc.mesh.position.x +=
             npc.direction * npc.speed;
-
-        /* Turn around at the edge of the road */
 
         if(npc.mesh.position.x > 12){
 
@@ -1792,15 +1800,12 @@ function updateTraffic(){
 
         }
 
-        /* Face walking direction */
-
         npc.mesh.rotation.y =
             npc.direction > 0
             ? Math.PI / 2
             : -Math.PI / 2;
     });
 }
-
 
 /* =====================================================
    CAMERA
