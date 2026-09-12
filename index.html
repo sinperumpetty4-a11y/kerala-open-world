@@ -2193,6 +2193,21 @@ function updateCar(){
         direction,
         carSpeed
   );
+    /* WHEEL ROTATION */
+
+car.children.forEach(part => {
+
+    if(
+        part.geometry &&
+        part.geometry.type === "CylinderGeometry"
+    ){
+
+        part.rotation.x -=
+            carSpeed * 2.5;
+
+    }
+
+});
     car.position.x=
         THREE.MathUtils.clamp(
             car.position.x,
