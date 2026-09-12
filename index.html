@@ -6,7 +6,7 @@
 <title>Kerala Open World</title>
 
 <style>
-html,body{
+html,body{                                                                                                
     margin:0;
     overflow:hidden;
     font-family:Arial,sans-serif;
@@ -2338,15 +2338,15 @@ function updateTraffic(){
          * driving through the water.
          */
 
-        if(vehicle.mesh.position.z > 330){
+        if(vehicle.mesh.position.z > 950){
 
-            vehicle.mesh.position.z = -330;
+            vehicle.mesh.position.z = -950;
 
         }
 
-        if(vehicle.mesh.position.z < -330){
+        if(vehicle.mesh.position.z < -950){
 
-            vehicle.mesh.position.z = 330;
+            vehicle.mesh.position.z = 950;
 
         }
     });
