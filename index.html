@@ -772,36 +772,67 @@ function addCarParts(group,color){
        WHEELS
        ========================= */
 
-    const wheelGeometry=
-        new THREE.CylinderGeometry(
-            .75,.75,.55,16
-        );
+const wheelGeometry=
+    new THREE.CylinderGeometry(
+        .75,.75,.55,20
+    );
 
-    [
-        [-2.1,-2.2],
-        [2.1,-2.2],
-        [-2.1,2.2],
-        [2.1,2.2]
-    ].forEach(([x,z])=>{
-
-        const wheel=
-            new THREE.Mesh(
-                wheelGeometry,
-                new THREE.MeshStandardMaterial({
-                    color:0x111111
-                })
-            );
-
-        wheel.rotation.z=
-            Math.PI/2;
-
-        wheel.position.set(
-            x,.75,z
-        );
-
-        group.add(wheel);
-
+const tireMaterial=
+    new THREE.MeshStandardMaterial({
+        color:0x111111
     });
+
+const rimGeometry=
+    new THREE.CylinderGeometry(
+        .38,.38,.58,16
+    );
+
+const rimMaterial=
+    new THREE.MeshStandardMaterial({
+        color:0xbdbdbd,
+        metalness:.7,
+        roughness:.3
+    });
+
+[
+    [-2.1,-2.2],
+    [2.1,-2.2],
+    [-2.1,2.2],
+    [2.1,2.2]
+].forEach(([x,z])=>{
+
+    const wheel=
+        new THREE.Mesh(
+            wheelGeometry,
+            tireMaterial
+        );
+
+    wheel.rotation.z=
+        Math.PI/2;
+
+    wheel.position.set(
+        x,.75,z
+    );
+
+    group.add(wheel);
+
+
+    const rim=
+        new THREE.Mesh(
+            rimGeometry,
+            rimMaterial
+        );
+
+    rim.rotation.z=
+        Math.PI/2;
+
+    rim.position.set(
+        x,.75,z
+    );
+
+    group.add(rim);
+
+});
 
 }
 
