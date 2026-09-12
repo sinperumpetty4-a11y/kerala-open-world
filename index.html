@@ -2202,8 +2202,24 @@ car.children.forEach(part => {
         part.geometry.type === "CylinderGeometry"
     ){
 
+        /* Wheel spinning */
         part.rotation.x -=
             carSpeed * 2.5;
+
+
+        /* Front wheel steering */
+        if(part.position.z < -1){
+
+            if(keys["a"])
+                part.rotation.y = .35;
+
+            else if(keys["d"])
+                part.rotation.y = -.35;
+
+            else
+                part.rotation.y = 0;
+
+        }
 
     }
 
