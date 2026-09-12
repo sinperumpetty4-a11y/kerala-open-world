@@ -687,9 +687,9 @@ group.add(rightWindow);
     });
 
 
-   /* =========================
+/* =========================
    REAR LIGHTS
-   ========================= */
+========================= */
 
 const rearLightMaterial=
     new THREE.MeshStandardMaterial({
@@ -715,6 +715,38 @@ const rearLightMaterial=
     light.name="brakeLight";
 
     group.add(light);
+
+});
+
+
+/* =========================
+   REAR INDICATORS
+========================= */
+
+const indicatorMaterial=
+    new THREE.MeshStandardMaterial({
+        color:0xff9800,
+        emissive:0xff6600,
+        emissiveIntensity:.2
+    });
+
+[-1.35,1.35].forEach(x=>{
+
+    const indicator=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                .45,.25,.12
+            ),
+            indicatorMaterial
+        );
+
+    indicator.position.set(
+        x,1.65,3.56
+    );
+
+    indicator.name="rearIndicator";
+
+    group.add(indicator);
 
 });
     /* =========================
@@ -2253,6 +2285,30 @@ car.children.forEach(part => {
 
 });
 
+    /* TURN INDICATORS */
+
+car.children.forEach(part => {
+
+    if(part.name==="rearIndicator"){
+
+        const blinking =
+            Math.floor(performance.now()/400)%2===0;
+
+        if(part.position.x < 0){
+
+            part.visible =
+                keys["a"] && blinking;
+
+        }else{
+
+            part.visible =
+                keys["d"] && blinking;
+
+        }
+
+    }
+
+});
 
 }
     
