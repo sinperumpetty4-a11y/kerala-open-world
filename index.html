@@ -99,7 +99,7 @@ const camera=
         60,
         innerWidth/innerHeight,
         .1,
-        1000
+        2500
     );
 
 camera.position.set(0,7,12);
@@ -2131,11 +2131,19 @@ function updatePlayer(){
     if(keys["d"])
         player.position.x+=speed;
 
-    player.position.x=
-        THREE.MathUtils.clamp(
-            player.position.x,
-            -13,13
-        );
+   player.position.x=
+    THREE.MathUtils.clamp(
+        player.position.x,
+        -60,60
+    );
+
+
+player.position.z=
+    THREE.MathUtils.clamp(
+        player.position.z,
+        -1000,1000
+    );
+
 }
 
 
@@ -2259,13 +2267,13 @@ car.children.forEach(part => {
     car.position.x=
         THREE.MathUtils.clamp(
             car.position.x,
-            -13,13
+            -60,60
         );
 
     car.position.z=
         THREE.MathUtils.clamp(
             car.position.z,
-            -320,320
+            -1000,1000
         );
 
 
