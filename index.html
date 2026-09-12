@@ -687,36 +687,36 @@ group.add(rightWindow);
     });
 
 
-    /* =========================
-       REAR LIGHTS
-       ========================= */
+   /* =========================
+   REAR LIGHTS
+   ========================= */
 
-    const rearLightMaterial=
-        new THREE.MeshStandardMaterial({
-            color:0xd50000,
-            emissive:0x550000,
-            emissiveIntensity:.4
-        });
-
-    [-1.35,1.35].forEach(x=>{
-
-        const light=
-            new THREE.Mesh(
-                new THREE.BoxGeometry(
-                    .65,.38,.12
-                ),
-                rearLightMaterial
-            );
-
-        light.position.set(
-            x,1.2,3.55
-        );
-
-        group.add(light);
-
+const rearLightMaterial=
+    new THREE.MeshStandardMaterial({
+        color:0xd50000,
+        emissive:0x550000,
+        emissiveIntensity:.4
     });
 
+[-1.35,1.35].forEach(x=>{
 
+    const light=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                .65,.38,.12
+            ),
+            rearLightMaterial
+        );
+
+    light.position.set(
+        x,1.2,3.55
+    );
+
+    light.name="brakeLight";
+
+    group.add(light);
+
+});
     /* =========================
        FRONT BUMPER
        ========================= */
@@ -2237,7 +2237,31 @@ car.children.forEach(part => {
         );
 }
 
+car.position.z=
+    THREE.MathUtils.clamp(
+        car.position.z,
+        -320,320
+    );
 
+
+/* BRAKE LIGHTS */
+
+car.children.forEach(part => {
+
+    if(part.name==="brakeLight"){
+
+        if(keys["s"])
+            part.material.emissiveIntensity=2.5;
+        else
+            part.material.emissiveIntensity=.4;
+
+    }
+
+});
+
+
+}
+    
 /* =====================================================
    TRAFFIC MOVEMENT
 ===================================================== */
