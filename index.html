@@ -526,6 +526,10 @@ scene.add(player);
 
 function addCarParts(group,color){
 
+    /* =========================
+       MAIN BODY
+       ========================= */
+
     const body=
         new THREE.Mesh(
             new THREE.BoxGeometry(
@@ -539,6 +543,11 @@ function addCarParts(group,color){
     body.position.y=1.1;
 
     group.add(body);
+
+
+    /* =========================
+       ROOF
+       ========================= */
 
     const roof=
         new THREE.Mesh(
@@ -556,6 +565,212 @@ function addCarParts(group,color){
     );
 
     group.add(roof);
+
+
+    /* =========================
+       FRONT WINDSHIELD
+       ========================= */
+
+    const frontGlass=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                3.0,.85,.12
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x263238,
+                transparent:true,
+                opacity:.75
+            })
+        );
+
+    frontGlass.position.set(
+        0,1.95,-2.0
+    );
+
+    frontGlass.rotation.x=-.12;
+
+    group.add(frontGlass);
+
+
+    /* =========================
+       REAR WINDSHIELD
+       ========================= */
+
+    const rearGlass=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                3.0,.85,.12
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x263238,
+                transparent:true,
+                opacity:.75
+            })
+        );
+
+    rearGlass.position.set(
+        0,1.95,1.6
+    );
+
+    rearGlass.rotation.x=.12;
+
+    group.add(rearGlass);
+
+
+    /* =========================
+       FRONT HEADLIGHTS
+       ========================= */
+
+    const headlightMaterial=
+        new THREE.MeshStandardMaterial({
+            color:0xfff4b0,
+            emissive:0xffcc55,
+            emissiveIntensity:.5
+        });
+
+    [-1.35,1.35].forEach(x=>{
+
+        const light=
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    .65,.38,.12
+                ),
+                headlightMaterial
+            );
+
+        light.position.set(
+            x,1.2,-3.55
+        );
+
+        group.add(light);
+
+    });
+
+
+    /* =========================
+       REAR LIGHTS
+       ========================= */
+
+    const rearLightMaterial=
+        new THREE.MeshStandardMaterial({
+            color:0xd50000,
+            emissive:0x550000,
+            emissiveIntensity:.4
+        });
+
+    [-1.35,1.35].forEach(x=>{
+
+        const light=
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    .65,.38,.12
+                ),
+                rearLightMaterial
+            );
+
+        light.position.set(
+            x,1.2,3.55
+        );
+
+        group.add(light);
+
+    });
+
+
+    /* =========================
+       FRONT BUMPER
+       ========================= */
+
+    const frontBumper=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                4.0,.35,.3
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x222222
+            })
+        );
+
+    frontBumper.position.set(
+        0,.65,-3.55
+    );
+
+    group.add(frontBumper);
+
+
+    /* =========================
+       REAR BUMPER
+       ========================= */
+
+    const rearBumper=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                4.0,.35,.3
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x222222
+            })
+        );
+
+    rearBumper.position.set(
+        0,.65,3.55
+    );
+
+    group.add(rearBumper);
+
+
+    /* =========================
+       FRONT GRILLE
+       ========================= */
+
+    const grille=
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                1.3,.45,.08
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x111111
+            })
+        );
+
+    grille.position.set(
+        0,.95,-3.57
+    );
+
+    group.add(grille);
+
+
+    /* =========================
+       SIDE MIRRORS
+       ========================= */
+
+    const mirrorMaterial=
+        new THREE.MeshStandardMaterial({
+            color:0x151515
+        });
+
+    [-2.05,2.05].forEach(x=>{
+
+        const mirror=
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    .35,.25,.5
+                ),
+                mirrorMaterial
+            );
+
+        mirror.position.set(
+            x,1.85,-1.25
+        );
+
+        group.add(mirror);
+
+    });
+
+
+    /* =========================
+       WHEELS
+       ========================= */
 
     const wheelGeometry=
         new THREE.CylinderGeometry(
@@ -577,14 +792,17 @@ function addCarParts(group,color){
                 })
             );
 
-        wheel.rotation.z=Math.PI/2;
+        wheel.rotation.z=
+            Math.PI/2;
 
         wheel.position.set(
             x,.75,z
         );
 
         group.add(wheel);
+
     });
+
 }
 
 
