@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Perunna Open World</title>
+<title>Perunna Open World • Research Map</title>
 
 <style>
 *{box-sizing:border-box}
@@ -166,20 +166,20 @@ canvas{
 
 <div id="hud">
     <h1>🌴 PERUNNA</h1>
-    <div class="sub">KERALA • OPEN WORLD</div>
+    <div class="sub">PERUNNA • CHANGANASSERY • KOTTAYAM</div>
     <div id="mode">Mode: Walking</div>
     <div>Speed: <span id="speed">0</span></div>
     <div id="traffic">Traffic: 0</div>
     <div id="fps">FPS: --</div>
 </div>
 
-<div id="location">PERUNNA • KERALA, INDIA</div>
+<div id="location">PERUNNA • CHANGANASSERY, KERALA</div>
 
 <div id="mission">
     <strong>⭐ Explore Perunna</strong>
-    <div id="missionText">Explore the town and find the temple.</div>
+    <div id="missionText">Visit Perunna Subrahmanya Swami Temple.</div>
     <br>
-    <small>Discover landmarks and travel through the Kerala countryside.</small>
+    <small>Roads and landmarks use researched Perunna references. Geometry is scaled for gameplay.</small>
 </div>
 
 <div id="map">
@@ -543,61 +543,23 @@ function createRoadSegment(
 }
 
 
-/* Main roads */
+/* Research-based Perunna road layout
+   Perunna is at the SH 1 / SH 11 junction.
+   SH 11 is the Alappuzha-Changanassery (AC) Road. */
 
-createRoadSegment(
-    0,
-    0,
-    22,
-    1450,
-    0
-);
+const ROAD_MAIN = {name:"MC Road / SH 1", x:0, z0:-760, z1:760};
+const ROAD_AC = {name:"AC Road / SH 11", x0:-760, x1:120, z:205, rot:-0.18};
 
-
-createRoadSegment(
-    0,
-    0,
-    18,
-    1050,
-    Math.PI/2
-);
-
-
-createRoadSegment(
-    -170,
-    20,
-    14,
-    700,
-    -.52
-);
-
-
-createRoadSegment(
-    180,
-    -60,
-    14,
-    800,
-    .55
-);
-
-
-createRoadSegment(
-    -100,
-    270,
-    12,
-    550,
-    1.15
-);
-
-
-createRoadSegment(
-    140,
-    300,
-    12,
-    500,
-    -.9
-);
-
+createRoadSegment(ROAD_MAIN.x,0,28,1520,0);
+createRoadSegment(-320,205,24,900,ROAD_AC.rot);
+createRoadSegment(78,0,12,430,Math.PI/2);
+createRoadSegment(-80,115,12,520,Math.PI/2);
+createRoadSegment(-70,-45,11,300,.10);
+createRoadSegment(-365,-360,12,520,-.55);
+createRoadSegment(-260,80,9,340,.25);
+createRoadSegment(270,30,9,390,-.20);
+createRoadSegment(260,330,9,330,.72);
+createRoadSegment(-300,390,9,360,-.65);
 
 /* smaller roads */
 
@@ -715,37 +677,12 @@ function createWater(
 }
 
 
-/* Kodoor River */
+/* Water / backwater landscape on the outskirts.
+   Kept outside the NSS campus core so roads and buildings remain walkable. */
 
-createWater(
-    -330,
-    0,
-    95,
-    1250,
-    .08
-);
-
-
-/* AC Canal */
-
-createWater(
-    300,
-    300,
-    55,
-    900,
-    -.3
-);
-
-
-/* Small backwater */
-
-createWater(
-    -280,
-    430,
-    250,
-    180,
-    .1
-);
+createWater(-650,120,85,1150,.08);
+createWater(430,570,70,520,-.28);
+createWater(-360,600,260,150,.12);
 
 
 /* =========================================================
@@ -762,7 +699,6 @@ function createBridge(
     const bridge =
         new THREE.Group();
 
-
     const deck =
         new THREE.Mesh(
             new THREE.BoxGeometry(
@@ -773,17 +709,11 @@ function createBridge(
             roadMat
         );
 
-
     deck.position.y=.65;
-
     deck.receiveShadow=true;
-
     bridge.add(deck);
 
-
-    const railMat =
-        mat(0xd2d0c3);
-
+    const railMat = mat(0xd2d0c3);
 
     for(
         let p=-length/2;
@@ -813,7 +743,6 @@ function createBridge(
         });
     }
 
-
     [-9,9].forEach(side=>{
 
         const rail =
@@ -835,36 +764,18 @@ function createBridge(
         bridge.add(rail);
     });
 
-
     bridge.position.set(
         x,
         0,
         z
     );
 
-
-    bridge.rotation.y=
-        rotation;
-
-
+    bridge.rotation.y = rotation;
     scene.add(bridge);
 }
 
-
-createBridge(
-    -330,
-    -220,
-    120,
-    0
-);
-
-
-createBridge(
-    300,
-    300,
-    100,
-    .3
-);
+createBridge(-650,-180,120,0);
+createBridge(430,570,100,-.28);
 
 
 /* =========================================================
@@ -1308,16 +1219,8 @@ function createTemple(
 }
 
 
-createTemple(
-    -250,
-    300
-);
-
-
-createTemple(
-    180,
-    270
-);
+/* Verified Perunna Subrahmanya Swami Temple placement. */
+createTemple(-560,-760);
 
 
 /* =========================================================
@@ -1576,7 +1479,7 @@ player.add(backpack);
 player.position.set(
     0,
     0,
-    40
+    45
 );
 
 
@@ -1923,9 +1826,9 @@ const playerCar =
 
 
 playerCar.mesh.position.set(
-    5,
+    10,
     0,
-    35
+    45
 );
 
 
@@ -2879,53 +2782,55 @@ function createLabel(
 
 
 createLabel(
-    "Vettadi Bhagavathy Temple",
-    new THREE.Vector3(
-        -250,
-        0,
-        300
-    )
+    "Perunna Subrahmanya Swami Temple",
+    new THREE.Vector3(-560,0,-760)
 );
-
-
-createLabel(
-    "Sree Subramanya Swami Temple",
-    new THREE.Vector3(
-        180,
-        0,
-        270
-    )
-);
-
 
 createLabel(
     "N.S.S. Hindu College",
-    new THREE.Vector3(
-        240,
-        0,
-        -260
-    )
+    new THREE.Vector3(0,0,0),
+    "#ffd75e"
 );
 
+createLabel(
+    "NSS Headquarters",
+    new THREE.Vector3(-10,0,-125),
+    "#7fd6ff"
+);
 
 createLabel(
-    "Sunset View Point",
-    new THREE.Vector3(
-        -300,
-        0,
-        430
-    ),
+    "NSS Medical Mission Hospital",
+    new THREE.Vector3(-135,0,-150),
+    "#ff9d9d"
+);
+
+createLabel(
+    "NSS Training College",
+    new THREE.Vector3(20,0,-170),
+    "#8ee7a0"
+);
+
+createLabel(
+    "NSS HSS Perunna",
+    new THREE.Vector3(-35,0,180),
+    "#8ee7a0"
+);
+
+createLabel(
+    "Perunna Post Office",
+    new THREE.Vector3(-75,0,-95),
+    "#f2d27a"
+);
+
+createLabel(
+    "Maaranathu Kavu",
+    new THREE.Vector3(145,0,-260),
     "#d98aff"
 );
 
-
 createLabel(
     "Perunna Town",
-    new THREE.Vector3(
-        0,
-        0,
-        0
-    ),
+    new THREE.Vector3(0,0,205),
     "#7fd6ff"
 );
 
@@ -2969,81 +2874,43 @@ function drawMinimap(){
     );
 
 
-    /* water */
+    /* water / outskirts */
 
     mapCtx.fillStyle="#267f8a";
 
+    mapCtx.fillRect(0,110,25,190);
+    mapCtx.fillRect(235,0,25,120);
+    mapCtx.fillRect(70,0,75,28);
 
-    mapCtx.fillRect(
-        10,
-        0,
-        35,
-        h
-    );
+    /* researched main roads */
 
+    mapCtx.strokeStyle="#d3caa9";
+    mapCtx.lineWidth=8;
 
-    mapCtx.fillRect(
-        215,
-        180,
-        45,
-        120
-    );
-
-
-    /* roads */
-
-    mapCtx.strokeStyle="#b9b49b";
-
-    mapCtx.lineWidth=7;
-
-
+    /* MC Road / SH 1 */
     mapCtx.beginPath();
-
-    mapCtx.moveTo(
-        150,
-        0
-    );
-
-    mapCtx.lineTo(
-        150,
-        300
-    );
-
+    mapCtx.moveTo(150,0);
+    mapCtx.lineTo(150,300);
     mapCtx.stroke();
 
-
+    /* AC Road / SH 11 */
     mapCtx.beginPath();
-
-    mapCtx.moveTo(
-        0,
-        150
-    );
-
-    mapCtx.lineTo(
-        300,
-        150
-    );
-
+    mapCtx.moveTo(15,95);
+    mapCtx.lineTo(150,118);
     mapCtx.stroke();
 
-
-    mapCtx.strokeStyle="#77766d";
-
-    mapCtx.lineWidth=3;
-
-
+    /* NSS campus road */
+    mapCtx.strokeStyle="#918e83";
+    mapCtx.lineWidth=4;
     mapCtx.beginPath();
+    mapCtx.moveTo(165,65);
+    mapCtx.lineTo(165,245);
+    mapCtx.stroke();
 
-    mapCtx.moveTo(
-        30,
-        50
-    );
-
-    mapCtx.lineTo(
-        270,
-        250
-    );
-
+    /* temple approach */
+    mapCtx.beginPath();
+    mapCtx.moveTo(150,150);
+    mapCtx.lineTo(55,275);
     mapCtx.stroke();
 
 
@@ -3187,9 +3054,9 @@ function updateMission(){
         const distance =
             player.position.distanceTo(
                 new THREE.Vector3(
-                    -250,
+                    -560,
                     0,
-                    300
+                    -760
                 )
             );
 
@@ -3201,7 +3068,7 @@ function updateMission(){
             document.getElementById(
                 "missionText"
             ).textContent =
-                "Great! Now visit Sunset View Point.";
+                "Great! Now return to NSS Hindu College.";
         }
     }
 
@@ -3211,9 +3078,9 @@ function updateMission(){
         const distance =
             player.position.distanceTo(
                 new THREE.Vector3(
-                    -300,
                     0,
-                    430
+                    0,
+                    0
                 )
             );
 
@@ -3225,7 +3092,7 @@ function updateMission(){
             document.getElementById(
                 "missionText"
             ).textContent =
-                "Mission complete! Explore Perunna freely.";
+                "Mission complete! Explore the researched Perunna area freely.";
         }
     }
 }
