@@ -159,6 +159,31 @@ canvas{
         height:145px;
     }
 }
+<style>
+#weatherHud {
+    position: fixed;
+    top: 90px;
+    right: 18px;
+    z-index: 20;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(0,0,0,.55);
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+}
+
+#weatherHud b {
+    color: #ffd86b;
+}
+
+#weatherHint {
+    font-size: 10px;
+    opacity: .7;
+    margin-top: 3px;
+}
 </style>
 </head>
 
@@ -304,7 +329,774 @@ scene.add(
     )
 );
 
+/* =========================================================
+   PERUNNA ADVANCED DAY / NIGHT + WEATHER SYSTEM
+   ========================================================= */
 
+const weatherSystem = {
+    time: 8.0,              // starting time: 8 AM
+    timeSpeed: 0.025,       // game hours per real second
+
+    weather: "clear",
+    weatherTypes: [
+        "clear",
+        "cloudy",
+        "rain",
+        "storm"
+    ],
+
+    rainDrops: [],
+    clouds: [],
+    stars: [],
+    lightningTimer: 0,
+    lightningActive: false,
+
+    ambientBase: 1,
+    sunBase: 1
+};
+
+// ---------------------------------------------------------
+// HUD
+// ---------------------------------------------------------
+
+const weatherHud = document.createElement("div");
+weatherHud.id = "weatherHud";
+
+weatherHud.innerHTML = `
+    <div>🕒 <b id="gameClock">08:00 AM</b></div>
+    <div>🌦️ <span id="weatherName">Clear</span></div>
+    <div id="weatherHint">T = Change Weather</div>
+`;
+
+document.body.appendChild(weatherHud);
+
+
+// ---------------------------------------------------------
+// SKY
+// ---------------------------------------------------------
+
+const skyGeometry = new THREE.SphereGeometry(900, 32, 16);
+
+const skyMaterial = new THREE.MeshBasicMaterial({
+    color: 0x78b9e8,
+    side: THREE.BackSide,
+    fog: false
+});
+
+const sky = new THREE.Mesh(
+    skyGeometry,
+    skyMaterial
+);
+
+scene.add(sky);
+
+
+// ---------------------------------------------------------
+// MOON
+// ---------------------------------------------------------
+
+const moonGeometry = new THREE.SphereGeometry(22, 16, 16);
+
+const moonMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffffdd
+});
+
+const moon = new THREE.Mesh(
+    moonGeometry,
+    moonMaterial
+);
+
+scene.add(moon);
+
+
+// ---------------------------------------------------------
+// STARS
+// ---------------------------------------------------------
+
+const starGeometry = new THREE.BufferGeometry();
+
+const starPositions = [];
+
+for (let i = 0; i < 600; i++) {
+
+    const radius = 700;
+
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI * 0.45;
+
+    const x =
+        radius *
+        Math.sin(phi) *
+        Math.cos(theta);
+
+    const y =
+        radius *
+        Math.cos(phi);
+
+    const z =
+        radius *
+        Math.sin(phi) *
+        Math.sin(theta);
+
+    starPositions.push(x, y, z);
+}
+
+starGeometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(
+        starPositions,
+        3
+    )
+);
+
+const starMaterial = new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 2,
+    transparent: true,
+    opacity: 0
+});
+
+const starField = new THREE.Points(
+    starGeometry,
+    starMaterial
+);
+
+scene.add(starField);
+
+
+// ---------------------------------------------------------
+// CLOUDS
+// ---------------------------------------------------------
+
+function createWeatherCloud() {
+
+    const group = new THREE.Group();
+
+    const cloudMaterial =
+        new THREE.MeshLambertMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.72
+        });
+
+    for (let i = 0; i < 6; i++) {
+
+        const size =
+            12 + Math.random() * 15;
+
+        const cloud = new THREE.Mesh(
+            new THREE.SphereGeometry(
+                size,
+                8,
+                8
+            ),
+            cloudMaterial
+        );
+
+        cloud.position.set(
+            (Math.random() - .5) * 55,
+            (Math.random() - .5) * 8,
+            (Math.random() - .5) * 25
+        );
+
+        cloud.scale.y = .45;
+
+        group.add(cloud);
+    }
+
+    group.position.set(
+        (Math.random() - .5) * 900,
+        180 + Math.random() * 60,
+        (Math.random() - .5) * 900
+    );
+
+    group.userData.speed =
+        1 + Math.random() * 2;
+
+    scene.add(group);
+
+    weatherSystem.clouds.push(group);
+}
+
+for (let i = 0; i < 18; i++) {
+    createWeatherCloud();
+}
+
+
+// ---------------------------------------------------------
+// RAIN
+// ---------------------------------------------------------
+
+const rainGeometry =
+    new THREE.BufferGeometry();
+
+const rainPositions = [];
+
+const RAIN_COUNT = 1800;
+
+for (let i = 0; i < RAIN_COUNT; i++) {
+
+    rainPositions.push(
+        (Math.random() - .5) * 700,
+        Math.random() * 260,
+        (Math.random() - .5) * 700
+    );
+}
+
+rainGeometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(
+        rainPositions,
+        3
+    )
+);
+
+const rainMaterial =
+    new THREE.PointsMaterial({
+        color: 0x9edcff,
+        size: 1.7,
+        transparent: true,
+        opacity: 0
+    });
+
+const rain =
+    new THREE.Points(
+        rainGeometry,
+        rainMaterial
+    );
+
+scene.add(rain);
+
+
+// ---------------------------------------------------------
+// LIGHTNING
+// ---------------------------------------------------------
+
+const lightningLight =
+    new THREE.PointLight(
+        0xffffff,
+        0,
+        900
+    );
+
+lightningLight.position.set(
+    0,
+    300,
+    0
+);
+
+scene.add(lightningLight);
+
+
+// ---------------------------------------------------------
+// TIME HELPERS
+// ---------------------------------------------------------
+
+function formatGameTime(hours) {
+
+    let h = Math.floor(hours);
+    let minutes = Math.floor(
+        (hours - h) * 60
+    );
+
+    const suffix =
+        h >= 12 ? "PM" : "AM";
+
+    let displayHour =
+        h % 12;
+
+    if (displayHour === 0)
+        displayHour = 12;
+
+    return (
+        String(displayHour).padStart(2, "0")
+        + ":" +
+        String(minutes).padStart(2, "0")
+        + " " +
+        suffix
+    );
+}
+
+
+// ---------------------------------------------------------
+// WEATHER COLORS
+// ---------------------------------------------------------
+
+function updateSkyColor() {
+
+    const t = weatherSystem.time;
+
+    let color;
+
+    // NIGHT
+    if (t < 5.5 || t >= 19.0) {
+
+        color = new THREE.Color(
+            0x07152e
+        );
+
+    }
+
+    // SUNRISE
+    else if (t < 7.0) {
+
+        const p =
+            (t - 5.5) / 1.5;
+
+        color = new THREE.Color(
+            0x162a55
+        ).lerp(
+            new THREE.Color(0xffa46b),
+            p
+        );
+
+    }
+
+    // MORNING
+    else if (t < 10.0) {
+
+        const p =
+            (t - 7) / 3;
+
+        color = new THREE.Color(
+            0xffa46b
+        ).lerp(
+            new THREE.Color(0x74b9ed),
+            p
+        );
+
+    }
+
+    // DAY
+    else if (t < 17.0) {
+
+        color = new THREE.Color(
+            0x74b9ed
+        );
+
+    }
+
+    // SUNSET
+    else {
+
+        const p =
+            (t - 17) / 2;
+
+        color = new THREE.Color(
+            0x74b9ed
+        ).lerp(
+            new THREE.Color(0x132451),
+            p
+        );
+    }
+
+    // CLOUDY / RAIN DARKENING
+
+    if (weatherSystem.weather === "cloudy") {
+
+        color.multiplyScalar(.78);
+
+    }
+
+    if (weatherSystem.weather === "rain") {
+
+        color.multiplyScalar(.62);
+
+    }
+
+    if (weatherSystem.weather === "storm") {
+
+        color.multiplyScalar(.38);
+
+    }
+
+    skyMaterial.color.copy(color);
+
+    scene.background = color;
+
+    if (scene.fog) {
+
+        scene.fog.color.copy(color);
+
+    }
+}
+
+
+// ---------------------------------------------------------
+// LIGHTING
+// ---------------------------------------------------------
+
+function updateLighting() {
+
+    const t = weatherSystem.time;
+
+    let daylight = 0;
+
+    if (t >= 6 && t < 18) {
+
+        daylight =
+            Math.sin(
+                ((t - 6) / 12) * Math.PI
+            );
+
+    }
+
+    // weather reduces daylight
+
+    if (weatherSystem.weather === "cloudy")
+        daylight *= .8;
+
+    if (weatherSystem.weather === "rain")
+        daylight *= .55;
+
+    if (weatherSystem.weather === "storm")
+        daylight *= .35;
+
+
+    // Find existing lights
+
+    scene.traverse(function(obj) {
+
+        if (
+            obj.isDirectionalLight &&
+            obj.userData.weatherControlled !== true
+        ) {
+
+            obj.userData.weatherControlled =
+                true;
+
+            obj.userData.originalIntensity =
+                obj.intensity;
+        }
+
+    });
+
+
+    scene.traverse(function(obj) {
+
+        if (
+            obj.isDirectionalLight &&
+            obj.userData.weatherControlled
+        ) {
+
+            obj.intensity =
+                obj.userData.originalIntensity *
+                (.18 + daylight * .95);
+
+        }
+
+        if (
+            obj.isAmbientLight
+        ) {
+
+            obj.intensity =
+                .18 +
+                daylight * .65;
+
+        }
+
+    });
+
+
+    // Moon
+
+    const moonAngle =
+        ((t - 12) / 24) *
+        Math.PI * 2;
+
+    moon.position.set(
+        Math.cos(moonAngle) * 500,
+        Math.sin(moonAngle) * 350,
+        -250
+    );
+
+    moon.visible =
+        t < 6 ||
+        t >= 18;
+
+
+    // Stars
+
+    const nightAmount =
+        (t < 5.5 || t >= 19)
+            ? 1
+            : 0;
+
+    starMaterial.opacity =
+        nightAmount * .85;
+
+    starField.visible =
+        nightAmount > 0;
+}
+
+
+// ---------------------------------------------------------
+// RAIN UPDATE
+// ---------------------------------------------------------
+
+function updateRain(delta) {
+
+    const positions =
+        rainGeometry.attributes.position.array;
+
+    const raining =
+        weatherSystem.weather === "rain" ||
+        weatherSystem.weather === "storm";
+
+    rainMaterial.opacity =
+        raining
+            ? (
+                weatherSystem.weather === "storm"
+                    ? .75
+                    : .45
+              )
+            : 0;
+
+    rain.visible = raining;
+
+    if (!raining)
+        return;
+
+    for (let i = 0; i < RAIN_COUNT; i++) {
+
+        const index = i * 3;
+
+        positions[index + 1] -=
+            180 * delta;
+
+        if (
+            positions[index + 1] < 0
+        ) {
+
+            positions[index] =
+                (Math.random() - .5) * 700;
+
+            positions[index + 1] =
+                240 + Math.random() * 80;
+
+            positions[index + 2] =
+                (Math.random() - .5) * 700;
+        }
+    }
+
+    rainGeometry.attributes.position.needsUpdate =
+        true;
+
+    // Keep rain around player
+
+    if (typeof player !== "undefined") {
+
+        rain.position.x =
+            player.position.x;
+
+        rain.position.z =
+            player.position.z;
+    }
+}
+
+
+// ---------------------------------------------------------
+// CLOUD MOVEMENT
+// ---------------------------------------------------------
+
+function updateClouds(delta) {
+
+    for (const cloud of weatherSystem.clouds) {
+
+        cloud.position.x +=
+            cloud.userData.speed * delta;
+
+        if (
+            cloud.position.x > 500
+        ) {
+
+            cloud.position.x = -500;
+
+        }
+    }
+
+    const cloudVisible =
+        weatherSystem.weather !== "clear";
+
+    for (const cloud of weatherSystem.clouds) {
+
+        cloud.visible =
+            cloudVisible;
+    }
+}
+
+
+// ---------------------------------------------------------
+// STORM LIGHTNING
+// ---------------------------------------------------------
+
+function updateLightning(delta) {
+
+    if (
+        weatherSystem.weather !== "storm"
+    ) {
+
+        lightningLight.intensity = 0;
+
+        return;
+    }
+
+    weatherSystem.lightningTimer -=
+        delta;
+
+    if (
+        weatherSystem.lightningTimer <= 0
+    ) {
+
+        weatherSystem.lightningTimer =
+            5 + Math.random() * 12;
+
+        lightningLight.position.set(
+            (Math.random() - .5) * 500,
+            250 + Math.random() * 200,
+            (Math.random() - .5) * 500
+        );
+
+        lightningLight.intensity =
+            7 + Math.random() * 8;
+
+        setTimeout(function() {
+
+            lightningLight.intensity = 0;
+
+        }, 100);
+    }
+}
+
+
+// ---------------------------------------------------------
+// WEATHER HUD
+// ---------------------------------------------------------
+
+function updateWeatherHUD() {
+
+    const clock =
+        document.getElementById(
+            "gameClock"
+        );
+
+    const weatherName =
+        document.getElementById(
+            "weatherName"
+        );
+
+    if (clock) {
+
+        clock.textContent =
+            formatGameTime(
+                weatherSystem.time
+            );
+    }
+
+    if (weatherName) {
+
+        const icons = {
+            clear: "☀️ Clear",
+            cloudy: "☁️ Cloudy",
+            rain: "🌧️ Rain",
+            storm: "⛈️ Storm"
+        };
+
+        weatherName.textContent =
+            icons[
+                weatherSystem.weather
+            ];
+    }
+}
+
+
+// ---------------------------------------------------------
+// WEATHER CHANGE
+// ---------------------------------------------------------
+
+function setWeather(type) {
+
+    if (
+        !weatherSystem.weatherTypes
+            .includes(type)
+    ) return;
+
+    weatherSystem.weather =
+        type;
+
+    updateSkyColor();
+    updateWeatherHUD();
+}
+
+
+// ---------------------------------------------------------
+// T KEY WEATHER SWITCH
+// ---------------------------------------------------------
+
+window.addEventListener(
+    "keydown",
+    function(e) {
+
+        if (
+            e.key.toLowerCase() === "t"
+        ) {
+
+            const current =
+                weatherSystem.weatherTypes
+                    .indexOf(
+                        weatherSystem.weather
+                    );
+
+            const next =
+                (
+                    current + 1
+                ) %
+                weatherSystem.weatherTypes
+                    .length;
+
+            setWeather(
+                weatherSystem.weatherTypes[
+                    next
+                ]
+            );
+        }
+    }
+);
+
+
+// ---------------------------------------------------------
+// MAIN WEATHER UPDATE
+// ---------------------------------------------------------
+
+function updateWeatherSystem(delta) {
+
+    weatherSystem.time +=
+        weatherSystem.timeSpeed *
+        delta;
+
+    if (
+        weatherSystem.time >= 24
+    ) {
+
+        weatherSystem.time -= 24;
+
+    }
+
+    updateSkyColor();
+    updateLighting();
+    updateRain(delta);
+    updateClouds(delta);
+    updateLightning(delta);
+    updateWeatherHUD();
+}
+
+
+// Initial state
+
+setWeather("clear");
+updateSkyColor();
+updateLighting();
+    
 /* =========================================================
    MATERIAL HELPERS
 ========================================================= */
@@ -3212,7 +4004,7 @@ function animate(){
 
     updateMission();
 
-    updateDayNight();
+    updateWeatherSystem(1 / 60);
 
     drawMinimap();
 
