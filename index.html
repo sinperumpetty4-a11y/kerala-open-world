@@ -960,6 +960,8 @@ function updateLightning(delta) {
         lightningLight.intensity =
             7 + Math.random() * 8;
 
+        thunderSound();
+        
         setTimeout(function() {
 
             lightningLight.intensity = 0;
@@ -1096,6 +1098,555 @@ function updateWeatherSystem(delta) {
 setWeather("clear");
 updateSkyColor();
 updateLighting();
+
+    /* =========================================================
+   NIGHT LIGHTS + VEHICLE HEADLIGHTS
+========================================================= */
+
+const nightLights = [];
+const vehicleLights = [];
+
+
+/* ---------------------------------------------------------
+   PLAYER CAR HEADLIGHTS
+--------------------------------------------------------- */
+
+function addCarHeadlights(carGroup){
+
+    const left = new THREE.SpotLight(
+        0xffffdd,
+        0,
+        55,
+        Math.PI / 7,
+        0.45,
+        1.2
+    );
+
+    const right = new THREE.SpotLight(
+        0xffffdd,
+        0,
+        55,
+        Math.PI / 7,
+        0.45,
+        1.2
+    );
+
+    left.position.set(
+        -1.35,
+        1.25,
+        -3.45
+    );
+
+    right.position.set(
+        1.35,
+        1.25,
+        -3.45
+    );
+
+    const leftTarget =
+        new THREE.Object3D();
+
+    const rightTarget =
+        new THREE.Object3D();
+
+    leftTarget.position.set(
+        -1.35,
+        0.8,
+        -18
+    );
+
+    rightTarget.position.set(
+        1.35,
+        0.8,
+        -18
+    );
+
+    carGroup.add(left);
+    carGroup.add(right);
+
+    carGroup.add(leftTarget);
+    carGroup.add(rightTarget);
+
+    left.target = leftTarget;
+    right.target = rightTarget;
+
+    left.castShadow = true;
+    right.castShadow = true;
+
+    vehicleLights.push(left, right);
+}
+
+
+/* Add headlights to player's car */
+
+addCarHeadlights(
+    playerCar.mesh
+);
+
+
+/* ---------------------------------------------------------
+   STREET LIGHT CREATOR
+--------------------------------------------------------- */
+
+function createStreetLight(
+    x,
+    z,
+    rotation = 0
+){
+
+    const pole =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                .12,
+                .16,
+                7,
+                8
+            ),
+            mat(0x333333)
+        );
+
+    pole.position.set(
+        x,
+        3.5,
+        z
+    );
+
+    pole.rotation.y =
+        rotation;
+
+    scene.add(pole);
+
+
+    const lamp =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .25,
+                8,
+                8
+            ),
+            new THREE.MeshBasicMaterial({
+                color:0xffe8a3
+            })
+        );
+
+    lamp.position.set(
+        x,
+        7,
+        z
+    );
+
+    scene.add(lamp);
+
+
+    const light =
+        new THREE.PointLight(
+            0xffd98a,
+            0,
+            24,
+            2
+        );
+
+    light.position.set(
+        x,
+        6.8,
+        z
+    );
+
+    scene.add(light);
+
+    nightLights.push(light);
+}
+
+
+/* ---------------------------------------------------------
+   PERUNNA STREET LIGHTS
+--------------------------------------------------------- */
+
+/* MC Road */
+
+for(
+    let z=-700;
+    z<=700;
+    z+=100
+){
+
+    createStreetLight(
+        -10,
+        z
+    );
+
+    createStreetLight(
+        10,
+        z
+    );
+}
+
+
+/* NSS campus road */
+
+for(
+    let z=-180;
+    z<=180;
+    z+=55
+){
+
+    createStreetLight(
+        -18,
+        z
+    );
+}
+
+
+/* AC Road */
+
+for(
+    let i=0;
+    i<12;
+    i++
+){
+
+    createStreetLight(
+        -520 + i*55,
+        205 - i*10,
+        -.18
+    );
+}
+
+
+/* ---------------------------------------------------------
+   CAMPUS LIGHTS
+--------------------------------------------------------- */
+
+function createBuildingLight(
+    x,
+    y,
+    z
+){
+
+    const light =
+        new THREE.PointLight(
+            0xffd88a,
+            0,
+            35,
+            2
+        );
+
+    light.position.set(
+        x,
+        y,
+        z
+    );
+
+    scene.add(light);
+
+    nightLights.push(light);
+
+
+    const glow =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .12,
+                8,
+                8
+            ),
+            new THREE.MeshBasicMaterial({
+                color:0xffe4a3
+            })
+        );
+
+    glow.position.copy(
+        light.position
+    );
+
+    scene.add(glow);
+}
+
+
+/* NSS Hindu College */
+
+createBuildingLight(
+    -10,
+    5,
+    -15
+);
+
+createBuildingLight(
+    10,
+    5,
+    -15
+);
+
+createBuildingLight(
+    -10,
+    5,
+    15
+);
+
+createBuildingLight(
+    10,
+    5,
+    15
+);
+
+
+/* NSS Headquarters */
+
+createBuildingLight(
+    -35,
+    5,
+    100
+);
+
+createBuildingLight(
+    0,
+    5,
+    100
+);
+
+createBuildingLight(
+    35,
+    5,
+    100
+);
+
+
+/* ---------------------------------------------------------
+   NIGHT LIGHT UPDATE
+--------------------------------------------------------- */
+
+function updateNightLights(){
+
+    const t =
+        weatherSystem.time;
+
+    const night =
+        t >= 18 ||
+        t < 6;
+
+    const evening =
+        t >= 17 ||
+        t < 7;
+
+
+    /* Street lights */
+
+    nightLights.forEach(
+        light => {
+
+            light.intensity =
+                evening
+                    ? 2.2
+                    : 0;
+
+        }
+    );
+
+
+    /* Vehicle headlights */
+
+    vehicleLights.forEach(
+        light => {
+
+            light.intensity =
+                night
+                    ? 3.5
+                    : 0;
+
+        }
+    );
+}
+
+/* =========================================================
+   WEATHER SOUND SYSTEM
+========================================================= */
+
+let audioContext = null;
+let rainNoise = null;
+let rainGain = null;
+
+
+/* ---------------------------------------------------------
+   START AUDIO
+--------------------------------------------------------- */
+
+function startWeatherAudio(){
+
+    if(audioContext)
+        return;
+
+    audioContext =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+
+    /* Rain noise */
+
+    const bufferSize =
+        audioContext.sampleRate * 2;
+
+    const buffer =
+        audioContext.createBuffer(
+            1,
+            bufferSize,
+            audioContext.sampleRate
+        );
+
+    const data =
+        buffer.getChannelData(0);
+
+
+    for(
+        let i=0;
+        i<bufferSize;
+        i++
+    ){
+
+        data[i] =
+            Math.random() * 2 - 1;
+
+    }
+
+
+    rainNoise =
+        audioContext.createBufferSource();
+
+    rainNoise.buffer =
+        buffer;
+
+    rainNoise.loop = true;
+
+
+    rainGain =
+        audioContext.createGain();
+
+    rainGain.gain.value = 0;
+
+
+    rainNoise.connect(
+        rainGain
+    );
+
+    rainGain.connect(
+        audioContext.destination
+    );
+
+    rainNoise.start();
+}
+
+
+/* ---------------------------------------------------------
+   WEATHER SOUND UPDATE
+--------------------------------------------------------- */
+
+function updateWeatherSound(){
+
+    if(!audioContext)
+        return;
+
+    if(!rainGain)
+        return;
+
+
+    if(
+        weatherSystem.weather === "rain"
+    ){
+
+        rainGain.gain.value =
+            .035;
+
+    }
+
+    else if(
+        weatherSystem.weather === "storm"
+    ){
+
+        rainGain.gain.value =
+            .07;
+
+    }
+
+    else{
+
+        rainGain.gain.value =
+            0;
+
+    }
+}
+
+
+/* ---------------------------------------------------------
+   START AUDIO AFTER PLAYER INPUT
+--------------------------------------------------------- */
+
+window.addEventListener(
+    "keydown",
+    function(){
+
+        startWeatherAudio();
+
+    },
+    { once:true }
+);
+
+function thunderSound(){
+
+    if(!audioContext)
+        return;
+
+
+    const oscillator =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+
+    oscillator.type =
+        "sawtooth";
+
+
+    oscillator.frequency.setValueAtTime(
+        70,
+        audioContext.currentTime
+    );
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+        25,
+        audioContext.currentTime + 1.5
+    );
+
+
+    gain.gain.setValueAtTime(
+        0,
+        audioContext.currentTime
+    );
+
+    gain.gain.linearRampToValueAtTime(
+        .12,
+        audioContext.currentTime + .05
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioContext.currentTime + 1.8
+    );
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+        audioContext.destination
+    );
+
+
+    oscillator.start();
+
+    oscillator.stop(
+        audioContext.currentTime + 1.8
+    );
+}
     
 /* =========================================================
    MATERIAL HELPERS
@@ -4005,6 +4556,10 @@ function animate(){
     updateMission();
 
     updateWeatherSystem(1 / 60);
+
+    updateNightLights();
+
+    updateWeatherSound();
 
     drawMinimap();
 
